@@ -5,9 +5,9 @@ import { dirname } from 'path';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-export const create = async () => {
+export const create = async (filenamePath) => {
     // const src = getPath('fresh.txt');
-    const src = __dirname + '/files/fresh.txt';
+    const src = filenamePath;
     const string = "I am fresh and young";
     try {
         await writeFile(src, string, { flag: 'wx' })
@@ -17,4 +17,4 @@ export const create = async () => {
     }
 };
 
-create();
+// create();

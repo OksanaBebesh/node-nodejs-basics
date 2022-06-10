@@ -1,9 +1,10 @@
-import { process } from "process";
-
+import { argv } from "process";
+let arg = []
 export const parseArgs = () => {
-    process.argv.forEach((value, index) => {
-        console.log(`${index}:${value}`)
+    argv.forEach((value, index) => {
+      arg.push([value,index])
     })
+    return arg
 };
 
 parseArgs();

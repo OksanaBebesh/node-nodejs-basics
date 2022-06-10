@@ -5,11 +5,11 @@ import {dirname} from "path";
 const errorMsg = "FS operation failed"
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
-const source = __dirname + "/files/wrongFilename.txt"
-const destination = __dirname + "/files/properFilename.md"
+// const source = __dirname + "/files/wrongFilename.txt"
+// const destination = __dirname + "/files/properFilename.md"
 
 
-export const rename = async () => {
+export const rename = async (source, destination) => {
     try {
         await renameFile(source, destination)
         console.log(`File "${source}" was renamed to "${destination}"`)
@@ -19,4 +19,4 @@ export const rename = async () => {
     }
 };
 
-rename();
+// rename();

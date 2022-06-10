@@ -5,9 +5,9 @@ import { dirname } from 'path';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const errorMsg = "FS operation failed";
-const dirPath = __dirname + '/files/'
+// const dirPath = __dirname + '/files/'
 
-export const list = async () => {
+export const list = async (dirPath) => {
 
     try {
         readdir(dirPath, (err, files) => {
@@ -21,4 +21,4 @@ export const list = async () => {
     }
 };
 
-list();
+// list();
