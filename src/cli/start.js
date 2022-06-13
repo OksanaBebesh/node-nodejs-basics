@@ -1,4 +1,5 @@
 import { argv, stdin, stdout, chdir, cwd  } from "process";
+import * as os from 'os';
 import * as readline from 'readline';
 import { dirname } from "path";
 import {fileURLToPath} from "url";
@@ -6,6 +7,9 @@ import {parseArgs} from "./args.js";
 import {list} from "../fs/list.js";
 import {create} from "../fs/create.js";
 import {rename} from "../fs/rename.js";
+import {compress} from "../zip/compress.js";
+import {compressByBrotli} from "../zip/compressByBrotli.js";
+import {decompressByBrotli} from "../zip/decompressByBrotli.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -19,13 +23,18 @@ export const startFileManager = async () => {
     startInput()
 }
 
-const startInput = async () => {
-
+const generateInput = () => {
     const rl = readline.createInterface({
         input:stdin,
         output:stdout,
         prompt: `You are currently in ${cwd()}>`
     });
+    return rl;
+}
+
+const startInput = async () => {
+
+    let rl = generateInput()
 
     rl.prompt();
 
@@ -33,20 +42,25 @@ const startInput = async () => {
 
         let command = line.trim().split(' ')
 
-        console.log(command)
         switch (command[0]) {
             case 'up':
                 let newDir = getUpCurrentDir()
                 chdir(newDir)
-                console.log('Command up to dir')
+                rl.setPrompt(cwd()+'>')
             break;
 
             case 'ls':
                 list(cwd())
+                rl.setPrompt(cwd()+'>')
             break;
 
             case 'add':
-                create(cwd()+command[1])
+                try {
+                    create(cwd()+'/'+command[1])
+                    console.log(`File create: ${cwd()+'/'+command[1]}`)
+                }
+                catch (err) {new Error(err)}
+
             break;
 
             case 'cat':
@@ -69,8 +83,36 @@ const startInput = async () => {
             case 'rm':
             break;
 
+            case 'compress':
+                compressByBrotli(command[1], command[2])
+            break;
+
+            case 'decompress':
+                decompressByBrotli(command[1], command[2])
+            break;
+
+            case 'os':
+                let argument = command[1].substring(2)
+                switch(argument){
+                    case 'homedir':
+                        console.log('Get home directory:\n')
+                        let tempDir = os.tmpdir()
+                        console.log(tempDir)
+                        break;
+                    case 'username':
+                        break;
+
+                    case 'EOL':
+                        console.log(os.EOL)
+                        break;
+
+                    case 'cpus':
+                        printInfoToConsole(getCPUModelClockRateInfo())
+                        break;
+                }
         }
-        rl.prompt()
+        rl.setPrompt(cwd()+'>')
+        rl.prompt();
 
     }).on('close',() => {
         console.log(`\nThank you for using File Manager, ${userName}!`)
@@ -87,8 +129,22 @@ const cutUserName = (userName) => {
 const getUpCurrentDir = () => {
     currentDir = cwd();
     currentDir = currentDir.substring(0,currentDir.lastIndexOf('/'))
-    console.log(currentDir)
     return currentDir
+}
+
+const getCPUModelClockRateInfo = () => {
+    let cpus = os.cpus();
+    let info = [`Amount of CPUS: ${cpus.length}`]
+    cpus.forEach(cpu => {
+        info.push( cpu.model + ' '+ cpu.speed + '\n' )
+    })
+    return info
+}
+
+const printInfoToConsole = (info) => {
+    info.forEach(line => {
+        console.log(line)
+    })
 }
 
 startFileManager()

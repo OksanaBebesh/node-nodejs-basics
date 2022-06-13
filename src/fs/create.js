@@ -11,7 +11,7 @@ export const create = async (filenamePath) => {
     const string = "I am fresh and young";
     try {
         await writeFile(src, string, { flag: 'wx' })
-        console.log(`"${string}" wrote to fresh.txt`)
+        // console.log(`"${string}" wrote to file`)
     } catch (err) {
         throw new Error(err);
     }
